@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const { error } = validate(req.body);
-  if (error) return es.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send(error.details[0].message);
 
   let genre = new Genre({
     name: req.body.name,
