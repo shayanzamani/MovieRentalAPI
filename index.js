@@ -1,4 +1,4 @@
-const debug = require("debug")("app:startup");
+const debug = require("debug")("debug");
 const config = require("config");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -13,6 +13,11 @@ const authenticator = require("./middleware/authenticator");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+
+if (!config.get("jwtPrivateKey")) {
+  debug("Fatal Error! jwtPrivateKey is not defined.");
+  process.exit(1);
+}
 
 mongoose
   .connect("mongodb://localhost/vidly", {
