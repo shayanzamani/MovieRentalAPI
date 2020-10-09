@@ -22,8 +22,10 @@ module.exports = function () {
     process.exit(1);
   });
 
-  winston.add(new winston.transports.File(), {
-    filename: "logfile.log",
-    handleExceptions: true,
-  });
+  winston.add(
+    new winston.transports.File({
+      filename: "logfile.log",
+      handleExceptions: true,
+    })
+  );
 };
