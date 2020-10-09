@@ -16,7 +16,7 @@ const User = mongoose.model(
   })
 );
 
-validateGenre = (user) => {
+validateUser = (user) => {
   const schema = Joi.object({
     name: Joi.string().min(5).max(50).required(),
     email: Joi.string().min(5).max(255).required().email(),
@@ -26,4 +26,4 @@ validateGenre = (user) => {
 };
 
 exports.User = User;
-exports.validate = validateGenre;
+exports.validate = validateUser;
