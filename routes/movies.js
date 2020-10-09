@@ -1,3 +1,4 @@
+const auth = require("../middleware/auth");
 const { Movie, validate } = require("../models/movie");
 const express = require("express");
 const router = express.Router();
