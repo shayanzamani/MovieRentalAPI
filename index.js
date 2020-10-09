@@ -1,72 +1,14 @@
-require("express-async-errors");
 const winston = require("winston");
-require("winston-mongodb");
-const debug = require("debug")("debug");
-const config = require("config");
-const helmet = require("helmet");
-const morgan = require("morgan");
-const genres = require("./routes/genres");
-const customers = require("./routes/customers");
-const movies = require("./routes/movies");
-const rentals = require("./routes/rentals");
-const users = require("./routes/users");
-const auth = require("./routes/auth");
-const error = require("./middleware/error");
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
 
-process.on("uncaughtException", (ex) => {
-  winston.error(ex.message, ex);
-  process.exit(1);
-});
-
-process.on("unhandledRejection", (ex) => {
-  winston.error(ex.message, ex);
-  process.exit(1);
-});
-
-winston.add(winston.transports.File, { filename: "logfile.log" });
-winston.add(winston.transports.MongoDB, { db: "mongodb://localhost/vidly" });
-
-if (!config.get("jwtPrivateKey")) {
-  debug("Fatal Error! jwtPrivateKey is not defined.");
-  process.exit(1);
-}
-
-mongoose
-  .connect("mongodb://localhost/vidly", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Connnected to Mongodb");
-  })
-  .catch((error) => {
-    console.error("There is a problem", error);
-  });
-
-console.log(config.get("name"));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(helmet());
-if (app.get("env") === "developement") {
-  app.use(morgan("tiny"));
-  debug("Morgan enabled...");
-}
-app.use("/api/genres", genres);
-app.use("/api/customers", customers);
-app.use("/api/movies", movies);
-app.use("/api/rentals", rentals);
-app.use("/api/users", users);
-app.use("/api/auth", auth);
-
-app.use(error);
+require("./startup/logging")();
+require("./startup/db")();
+require("./startup/routes")(app);
+require("./startup/config")();
+require("./startup/validation")();
+require("./startup/prod")();
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-  debug(`Listening on port ${port}...`);
-});
+app.listen(port, () => winston.info(`Listening on port ${port}...`));
