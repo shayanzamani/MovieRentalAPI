@@ -8,8 +8,6 @@ const movies = require("./routes/movies");
 const rentals = require("./routes/rentals");
 const users = require("./routes/users");
 const auth = require("./routes/auth");
-const logger = require("./middleware/logger");
-const authenticator = require("./middleware/authenticator");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -36,8 +34,6 @@ console.log(config.get("name"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(logger);
-app.use(authenticator);
 app.use(helmet());
 if (app.get("env") === "developement") {
   app.use(morgan("tiny"));
